@@ -14,20 +14,12 @@ namespace EnnukhinPr17
 
         private void ButtonResult_Clicked(object sender, EventArgs e)
         {
-            if (int.TryParse(entryNumber.Text, out int number))
-            {
                 using (WebClient webClient = new WebClient())
                 {
                     lableResult.TextColor = Color.Black;
-                    string req = webClient.DownloadString($"http://numbersapi.com/{number}?notfound=ceil");
+                    string req = webClient.DownloadString($"http://numbersapi.com/{entryNumber.Text.Replace(".","")}?notfound=ceil");
                     lableResult.Text = Translate(req);
                 }
-            }
-            else
-            {
-                lableResult.TextColor = Color.Red;
-                lableResult.Text = "Вы ввели не целое число!";
-            }
         }
 
         public string Translate(string word)
