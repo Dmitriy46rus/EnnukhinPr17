@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Net;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Web;
 using Xamarin.Forms;
 
 namespace EnnukhinPr17
@@ -20,10 +16,11 @@ namespace EnnukhinPr17
         {
             if (int.TryParse(entryNumber.Text, out int number))
             {
-                using (var webClient = new WebClient())
+                using (WebClient webClient = new WebClient())
                 {
                     lableResult.TextColor = Color.Black;
-                    lableResult.Text = webClient.DownloadString($"http://numbersapi.com/{number}");
+                    string req = webClient.DownloadString($"http://numbersapi.com/{number}?notfound=ceil");
+                    lableResult.Text = Translate(req);
                 }
             }
             else
@@ -32,5 +29,26 @@ namespace EnnukhinPr17
                 lableResult.Text = "Вы ввели не целое число!";
             }
         }
+
+        public string Translate(string word)
+        {
+            var url = $"https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ru&dt=t&q={HttpUtility.UrlEncode(word)}";
+            var webClient = new WebClient
+            {
+                Encoding = System.Text.Encoding.UTF8
+            };
+            var result = webClient.DownloadString(url);
+            try
+            {
+                result = result.Substring(4, result.IndexOf("\"", 4, StringComparison.Ordinal) - 4);
+                return result;
+            }
+            catch
+            {
+                return "Error";
+            }
+        }
+
+
     }
 }
